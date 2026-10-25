@@ -39,6 +39,24 @@ python3 code/main.py
 
 The blank template at `dataset/output.csv` is provided as a reference. Your final generated file for submission must be the root-level `output.csv`.
 
+## Ollama agent runtime
+
+The default `code/main.py` mode uses the local Ollama HTTP API at `http://localhost:11434` with model `llama3.2:3b`. Start Ollama and install the model before a live run:
+
+```powershell
+ollama serve
+ollama pull llama3.2:3b
+c:/python313/python.exe -u code/main.py
+```
+
+Set `OLLAMA_BASE_URL`, `OLLAMA_MODEL`, `OLLAMA_MAX_ITERATIONS`, `OLLAMA_WORKERS`, `OLLAMA_TIMEOUT`, and `OLLAMA_RETRIES` to adjust the bounded local agent. Defaults are two workers, two maximum generations per reviewed case, zero retries, and a 45-second request timeout. Straightforward cases skip the model; ambiguous cases receive a compact preflight bundle and at most one follow-up generation. Startup checks the service and model, then prints visible per-case progress, throughput, and estimated remaining time. Python validates every model action against registered tools, applies evidence cutoffs and deletion rules, and validates the temporary CSV before atomically replacing the final output. If the service, model, tool call, or bounded investigation fails, the program exits nonzero without replacing an existing output. Use `c:/python313/python.exe -u code/main.py --offline` only for explicit deterministic validation.
+
+Run focused tests with:
+
+```powershell
+c:/python313/python.exe -m unittest discover -s code -p 'test_*.py' -v
+```
+
 
 ## Dataset
 
